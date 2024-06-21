@@ -24,7 +24,7 @@ class GamesModel extends Model {
         $query->execute([$id]);
     }
 
-    function modify($nombre, $categoria, $precio, $fecha, $id){
+    function update($nombre, $categoria, $precio, $fecha, $id){
         $db = $this->createConexion();
         $query = $db->prepare('UPDATE juegos SET nombre=?, categoria=?, precio=?, fecha=? WHERE id=?');
         $query->execute([$nombre, $categoria, $precio, $fecha, $id]);
