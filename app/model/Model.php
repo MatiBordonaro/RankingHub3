@@ -80,7 +80,8 @@ class Model {
             (6, 'Super Mario Bros', 'Aventura', 9.99, '1985-09-13'),
             (7, 'Mario Kart 8 Deluxe', 'Carreras', 59.99, '2017-04-28'),
             (8, 'Red Dead Redemption', 'Acción', 59.99, '2018-10-26'),
-            (9, 'Pokemon Primera Generacion', 'Carreras', 29.99, '1996-02-27');";
+            (9, 'Pokemon Primera Generacion', 'Rol', 29.99, '1996-02-27'),
+            (10, 'Rocket League', 'Deportes', 29.99, '1996-02-27');";
                 
         
 

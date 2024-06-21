@@ -15,6 +15,7 @@ class GamesModel extends Model {
         $db = $this->createConexion();
         $query = $db->prepare('INSERT INTO juegos (nombre, categoria, precio, fecha) VALUES (?,?,?,?)');
         $query->execute([$nombre, $categoria, $precio, $fecha]);
+        return $db->lastInsertId();
     }
 
     function delete($id){
