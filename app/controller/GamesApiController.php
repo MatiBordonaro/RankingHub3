@@ -4,36 +4,35 @@ require_once 'app/model/CategoriesModel.php';
 require_once 'app/controller/APIcontroller.php';
 
 
-class GamesApiController extends APIcontroller
-{
+class GamesApiController extends APIcontroller {
 
     private $model;
     private $categories;
 
-    public function __construct()
-    {   //una vez construimos a gamesapicontroller hacemos que se construya apicontroller
+    public function __construct() {   //una vez construimos a gamesapicontroller hacemos que se construya apicontroller
         parent::__construct();
         $this->model = new GamesModel();
         $this->categories = new CategoriesModel();
     }
 
-    function get($params = [])
-    {
-        if (empty($params)) { //si params esta vacio obtenemos todas las tareas
-            $Games = $this->model->getAll();
+    function get($params = []) {
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : null;
+        $order = isset($_GET['order']) && strtoupper($_GET['order']) === 'DESC' ? 'DESC' : 'ASC';
+
+        if (empty($params)) { // Si params está vacío, obtenemos todos los juegos
+            $Games = $this->model->getAllSorted($sort, $order);
             $this->view->response($Games, 200);
-        } else { //sino obtenemos un solo juego
+        } else { // Sino, obtenemos un solo juego
             $Game = $this->model->get($params[':ID']);
             if (!empty($Game)) {
                 $this->view->response($Game, 200);
             } else {
-                $this->view->response(['msg:' => 'El juego con el id= '
-                    . $params[':ID'] . ' no existe'], 404);
+                $this->view->response(['msg:' => 'El juego con el id= ' . $params[':ID'] . ' no existe'], 404);
             }
         }
     }
-    function delete($params = [])
-    {
+
+    function delete($params = []) {
         $id = $params[':ID'];
         $Game = $this->model->get($id);
         if ($Game) {
@@ -43,9 +42,8 @@ class GamesApiController extends APIcontroller
             $this->view->response('El juego con id: ' . $id . ' NO existe', 404);
         }
     }
-    function add()
-    {
 
+    function add() {
         $body = $this->getdata(); //json que introdujo el cliente
 
         $nombre = $body->nombre;
@@ -54,9 +52,9 @@ class GamesApiController extends APIcontroller
         $fecha = $body->fecha;
 
         $id = $this->model->add($nombre, $categoria, $precio, $fecha);
-
         $this->view->response('El juego fue creado con el id: ' . $id, 201);
     }
+    
     function update($params = []){
         $id = $params[':ID'];
         $Game = $this->model->get($id);

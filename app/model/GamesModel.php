@@ -38,10 +38,18 @@ class GamesModel extends Model {
         return $juego;
     }
 
-    function getByCategory($category){
-        $db = $this->createConexion();
-        $query = $db->prepare('SELECT * FROM juegos WHERE categoria=?');
-        $query->execute([$category]);
+    function getAllSorted($sort = null, $order='ASC'){
+        $db =  $this->createConexion();
+        $sql = 'SELECT * FROM juegos';
+        if($sort){
+            if(strtoupper($order) === 'DESC'){
+                $sql .= ' ORDER BY ' . $sort . ' DESC';
+            } else {
+                $sql .= ' ORDER BY ' . $sort . ' ASC'; 
+            }
+        }
+        $query = $db->prepare($sql);
+        $query->execute();
         $juegos = $query->fetchAll(PDO::FETCH_OBJ);
         return $juegos;
     }
