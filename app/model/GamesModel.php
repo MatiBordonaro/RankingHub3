@@ -41,12 +41,9 @@ class GamesModel extends Model {
     function getAllSorted($sort = null, $order='ASC'){
         $db =  $this->createConexion();
         $sql = 'SELECT * FROM juegos';
-        if($sort){
-            if(strtoupper($order) === 'DESC'){
-                $sql .= ' ORDER BY ' . $sort . ' DESC';
-            } else {
-                $sql .= ' ORDER BY ' . $sort . ' ASC'; 
-            }
+        if($sort){ //acá se verifica si existe un campo para clasificar los juegos, y si no lo hay realiza un simple getAll
+            $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+            $sql .= ' ORDER BY ' . $sort . ' ' . $order;
         }
         $query = $db->prepare($sql);
         $query->execute();
