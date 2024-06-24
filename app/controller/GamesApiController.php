@@ -13,17 +13,15 @@ class GamesApiController extends APIcontroller {
     }
 
     function get($params = []) {
-        if (empty($params)) { // Si params está vacío, obtenemos todos los juegos
-            $sort = isset($_GET['sort']) ? $_GET['sort'] : 'id'; //por defecto es id
-            $order = isset($_GET['order']) ? $_GET['order'] : 'ASC'; //por defecto es ascendente
-            //acá abajo verifico que cuando el cliente quiera clasificar, la columna exista, sino se muestra por defecto(id)
-            if(!($sort === 'id' || $sort === 'nombre' || $sort === 'categoria' || $sort === 'precio' || $sort === 'fecha')){
-                $this->view->response(['msg:' => 'No se puede clasificar por este campo, seleccione uno de estos: id, nombre, categoria, precio, fecha'], 404);
-                return;
+        if (empty($params)) { // Si no hay parámetros, obtenemos todos los juegos
+            if(isset($_GET['sort']) || isset($_GET['order']))
+                $this->getAllSorted(); //obtiene los juegos clasificados o muestra por defecto
+            else if(isset($_GET['page']) || isset($_GET['limit']))
+                $this->getPaginated();
+            else {
+                $Games = $this->model->getAll();
+                $this->view->response($Games, 200);
             }
-            $Games = $this->model->getAllSorted($sort, $order);
-            //Los datos se mostrarán clasificados o por defecto gracias a la función GetAllSorted, en el model se encuentra la explicación
-            $this->view->response($Games, 200);
         } else { // Sí params no está vacio, obtenemos un solo juego
             $Game = $this->model->get($params[':ID']);
             if (!empty($Game)) {
@@ -31,6 +29,34 @@ class GamesApiController extends APIcontroller {
             } else {
                 $this->view->response(['msg:' => 'El juego con el id= ' . $params[':ID'] . ' no existe'], 404);
             }
+        }
+    }
+
+    function getAllSorted(){
+        //CLASIFICAR Y ORDENAR
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'id'; //por defecto es id
+        $order = isset($_GET['order']) ? $_GET['order'] : 'ASC'; //por defecto es ascendente
+        //acá abajo verifico que cuando el cliente quiera clasificar, la columna exista, sino se muestra por defecto(id)
+        if(!($sort === 'id' || $sort === 'nombre' || $sort === 'categoria' || $sort === 'precio' || $sort === 'fecha')){
+            $this->view->response(['msg:' => 'No se puede clasificar por este campo, seleccione uno de estos: id, nombre, categoria, precio, fecha'], 404);
+            return;
+        }
+        //Los datos se mostrarán clasificados o por defecto(id) gracias a la función GetAllSorted, en el model se encuentra la explicación
+        $Games = $this->model->getAllSorted($sort, $order);
+        $this->view->response($Games, 200);
+    }
+
+    function getPaginated(){
+        //PAGINACIÓN
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? $_GET['limit'] : 5;
+        if(!($page >= 1 && $limit > 2)){
+            $this->view->response(['msg:' => 'La página o el límite no es válido, por favor indique una página válida y un límite mayor a 2'], 404);
+            return;
+        } else {
+            $Games = $this->model->getPaginated($page, $limit);
+            $this->view->response($Games, 200);
+            return;
         }
     }
 
@@ -47,7 +73,7 @@ class GamesApiController extends APIcontroller {
 
     function add() {
         $body = $this->getdata(); // json que introdujo el cliente
-        // Verificar que todos los campos necesarios estén presentes
+        // verificar que todos los campos existan (menos el de id que el usuario no debe especificarlo)
         if(isset($body->nombre) && isset($body->categoria) && isset($body->precio) && isset($body->fecha)) {
             $nombre = $body->nombre;
             $categoria = $body->categoria;
@@ -82,4 +108,6 @@ class GamesApiController extends APIcontroller {
             $this->view->response(['msg:' => 'El juego con el id: ' . $id . ' no existe'], 404);
         }
     }
+
+    
 }

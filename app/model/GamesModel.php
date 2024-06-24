@@ -38,13 +38,24 @@ class GamesModel extends Model {
         return $juego;
     }
 
-    function getAllSorted($sort = null, $order='ASC'){
+    function getAllSorted($sort = null, $order= null){
         $db =  $this->createConexion();
         $sql = 'SELECT * FROM juegos';
-        if($sort){ //acá se verifica si existe un campo para clasificar los juegos, y si no lo hay realiza un simple getAll
-            $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-            $sql .= ' ORDER BY ' . $sort . ' ' . $order;
-        }
+        $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
+        $sql .= ' ORDER BY ' . $sort . ' ' . $order;
+        $query = $db->prepare($sql);
+        $query->execute();
+        $juegos = $query->fetchAll(PDO::FETCH_OBJ);
+        return $juegos;
+    }
+
+    function getPaginated($page = null, $limit){
+        $db =  $this->createConexion();
+        $offset = ($page - 1) * $limit; //el -1 sirve para que me cuente desde el primer valor de la página y no desde el último
+        //por ejemplo, página(3) - 1 * limite(5) = 10
+        //entonces, la db me devuelve a partir de la fila 10
+        //Pagina 1 = desde 1 a 5, Página 2 = desde 5 a 10, Página 3 = desde 10 a 15...
+        $sql = 'SELECT * FROM juegos LIMIT ' . $limit . ' OFFSET ' . $offset;
         $query = $db->prepare($sql);
         $query->execute();
         $juegos = $query->fetchAll(PDO::FETCH_OBJ);
