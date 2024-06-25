@@ -14,38 +14,52 @@ class GamesApiController extends APIcontroller {
 
     function get($params = []) {
         if (empty($params)) { //si no hay parámetros, obtenemos todos los juegos
-            //CLASIFICAR
-            if(isset($_GET['sort']) || isset($_GET['order'])){//si el cliente quiere clasificar u ordenar
-                if(isset($_GET['page']) || isset($_GET['limit']) || isset($_GET['key']) || isset($_GET['value'])){ //condición por si el cliente quiere realizar otras acciones mientras clasifica
-                    $this->view->response(['msg:' => 'No puede realizar otras acciones mientras clasifica'], 404);
+            //creo variables booleanas para no repetir tanto código. 
+            $sort = isset($_GET['sort']); //clasificar
+            $order = isset($_GET['order']); //ordenar
+            $page = isset($_GET['page']); //página
+            $limit = isset($_GET['limit']); //límite
+            $key = isset($_GET['key']); //clave
+            $value = isset($_GET['value']); //valor
+
+            //CLASIFICAR Y/O ORDENAR
+            if($sort || $order){//si el cliente quiere clasificar u ordenar
+                if($page || $limit || $key || $value){ //condición por si el cliente quiere realizar otras acciones mientras clasifica
+                    $this->view->response(['msg:' => 'No puede realizar otras acciones mientras clasifica u ordena'], 404);
                     die();
                 }
                 $this->getAllSorted(); //obtiene los juegos clasificados o muestra por defecto(id)
             }
             //PAGINAR
-            if(isset($_GET['page']) || isset($_GET['limit'])){ //si el cliente quiere paginar o poner un limite a mostrar
-                if(isset($_GET['sort']) || isset($_GET['order']) || isset($_GET['key']) || isset($_GET['value'])){ //condición por si el cliente quiere realizar otras acciones mientras realiza paginación
-                    $this->view->response(['msg:' => 'No puede realizar otras acciones mientras realiza una paginación'], 404);
+            if($page || $limit){ //si el cliente quiere paginar o poner un limite a mostrar
+                if($sort || $order || $key || $value){ //condición por si el cliente quiere realizar otras acciones mientras realiza paginación
+                    $this->view->response(['msg:' => 'No puede realizar otras acciones mientras realiza una paginación o limita objetos'], 404);
                     die();
                 }
                 $this->getPaginated();
             }
             //FILTRAR
-            if(isset($_GET['key']) && isset($_GET['value'])){
-                if(isset($_GET['sort']) || isset($_GET['order']) || isset($_GET['page']) || isset($_GET['limit'])){
-                    $this->view->response(['msg:' => 'No puede realizar otras acciones mientras quiere filtrar juegos'], 404);
-                    die();
+            if($key || $value){ //acá hago un paso extra para que toda la lógica de filtrar quede adentro de esta porcion de codigo
+                if($key && $value){
+                    if($sort || $order || $page || $limit){ //prohibir otras acciones mientras filtre
+                        $this->view->response(['msg:' => 'No puede realizar otras acciones mientras se filtran juegos'], 404);
+                        die();
+                    } else {
+                        $this->getFiltered();
+                    }
+                } else { //si llega acá quiere decir que indico una clave o un valor, pero no ambos
+                    $this->view->response(['msg:' => 'Debe indicar si o si una clave y luego un valor, intente de nuevo'], 404);
                 }
-                $this->getFiltered();
             }
+            //OBTENER TODOS 
             else {
-                $Games = $this->model->getAll(); //si el cliente no realiza ninguna petición extra, obtiene todos los juegos
-                $this->view->response($Games, 200);
+                $games = $this->model->getAll(); //si el cliente no realiza ninguna petición extra, obtiene todos los juegos
+                $this->view->response($games, 200);
             }
         } else { // Sí params no está vacio, obtenemos un solo juego
-            $Game = $this->model->get($params[':ID']);
-            if (!empty($Game)) {
-                $this->view->response($Game, 200);
+            $game = $this->model->get($params[':ID']);
+            if (!empty($game)) {
+                $this->view->response($game, 200);
             } else {
                 $this->view->response(['msg:' => 'El juego con el id = ' . $params[':ID'] . ' no existe'], 404);
             }
@@ -56,13 +70,15 @@ class GamesApiController extends APIcontroller {
         //CLASIFICAR Y ORDENAR
         $sort = isset($_GET['sort']) ? $_GET['sort'] : 'id'; //por defecto es id
         $order = isset($_GET['order']) ? $_GET['order'] : 'ASC'; //por defecto es ascendente
+        $sortValidos = ['id', 'nombre', 'categoria', 'precio', 'fecha'];
+        $orderValidos = ['asc', 'desc', 'ASC', 'DESC'];
         //acá abajo verifico que cuando el cliente quiera clasificar, la columna exista, sino se muestra por defecto(id)
-        if(!($sort === 'id' || $sort === 'nombre' || $sort === 'categoria' || $sort === 'precio' || $sort === 'fecha')){
+        if(!(in_array($sort, $sortValidos))){
             $this->view->response(['msg:' => 'No se puede clasificar por este campo, seleccione uno de estos: id, nombre, categoria, precio, fecha'], 404);
             die();
         }
-        if(!($order === 'asc' || $order === 'desc' || $order === 'ASC' || $order === 'DESC')){
-            $this->view->response(['msg:' => 'Advertencia, el orden debe ser `asc` (ascendente) o `desc` (descendente)'], 404);
+        if(!(in_array($order, $orderValidos))){
+            $this->view->response(['msg:' => 'El orden debe ser `asc` (ascendente) o `desc` (descendente)'], 404);
             die();
         }
         //Los datos se mostrarán clasificados o por defecto(id) gracias a la función GetAllSorted, en el model se encuentra la explicación
@@ -87,13 +103,17 @@ class GamesApiController extends APIcontroller {
     function getFiltered(){
         $key = isset($_GET['key']) ? $_GET['key'] : null;
         $value = isset($_GET['value']) ? $_GET['value'] : null;
-        if(!($key && $value)){
+        $keyValidos = ['id', 'nombre', 'categoria', 'precio', 'fecha'];
+        if(!(in_array($key, $keyValidos))){
             $this->view->response(['msg:' => 'No puede filtrar por este campo, por favor seleccione uno de estos: id, nombre, categoria, precio, fecha'], 404);
             die();
         } else {
             $games = $this->model->getFiltered($key, $value);
+            if(empty($games)){
+                $this->view->response(['msg:' => 'No hay resultados para esta búsqueda.'], 404);
+                die();
+            }
             $this->view->response($games, 200);
-            die();
         }
     }
 
