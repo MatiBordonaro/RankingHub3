@@ -49,7 +49,7 @@ class GamesModel extends Model {
         return $juegos;
     }
 
-    function getPaginated($page = null, $limit){
+    function getPaginated($page = null, $limit = null){
         $db =  $this->createConexion();
         $offset = ($page - 1) * $limit; //el -1 sirve para que me cuente desde el primer valor de la página y no desde el último
         //por ejemplo, página(3) - 1 * limite(5) = 10
@@ -58,6 +58,15 @@ class GamesModel extends Model {
         $sql = 'SELECT * FROM juegos LIMIT ' . $limit . ' OFFSET ' . $offset;
         $query = $db->prepare($sql);
         $query->execute();
+        $juegos = $query->fetchAll(PDO::FETCH_OBJ);
+        return $juegos;
+    }
+
+    function getFiltered($key = null, $value = null){
+        $db = $this->createConexion();
+        $sql = 'SELECT * FROM juegos WHERE ' . $key . ' = ?';
+        $query = $db->prepare($sql);
+        $query->execute([$value]);
         $juegos = $query->fetchAll(PDO::FETCH_OBJ);
         return $juegos;
     }
