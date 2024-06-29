@@ -4,7 +4,7 @@
 ## Introducción
 En la siguiente documentación podremos ver distintos endpoints con distintas funciones, y algunos con parámetros disponibles.
 
-# localhost/RankingHub3/juegos 
+# localhost/RankingHub3/api/juegos 
 Este endpoint obtiene todos los juegos de la base de datos, ordenados por defecto (por id,  en orden ascendente).
 ```
 {
@@ -32,7 +32,7 @@ Este endpoint obtiene todos los juegos de la base de datos, ordenados por defect
 
 # Clasificar y ordenar #
 Este endpoint también puede usarse con query params, que nos permite realizar distintas funciones, por ejemplo ordenar los juegos por atributo.  
-### localhost/RankingHub3/juegos?sort=nombre ###
+### localhost/RankingHub3/api/juegos?sort=nombre ###
 ```
 [
     {
@@ -86,7 +86,7 @@ Por defecto los vemos en orden ascendente:
 ```
 
 Podemos cambiarle el sentido para visualizar los juegos de manera descendente.
-###   localhost/RankingHub3/juegos?order=desc ###
+###   localhost/RankingHub3/api/juegos?order=desc ###
 ```
  {
         "id": 10,
@@ -112,7 +112,7 @@ Podemos cambiarle el sentido para visualizar los juegos de manera descendente.
 ```
 Estos dos parámetros pueden utilizarse al mismo tiempo, de la siguiente forma:
 
-###   localhost/RankingHub3/juegos?sort=categoria&order=asc ###  
+###   localhost/RankingHub3/api/juegos?sort=categoria&order=asc ###  
 ```
 {
         "id": 8,
@@ -149,7 +149,7 @@ Aseguresé de indicar los parámetros correctamente, con los valores que indican
 
 # Paginar
 El mismo endpoint (localhost/RankingHub3/juegos) puede recibir más parámetros:
-### localhost/RankingHub3/juegos?page=2&limit=3 
+### localhost/RankingHub3/api/juegos?page=2&limit=3 
 ```
 [
     {
@@ -191,7 +191,7 @@ La página y el límite siempre debe ser un número entero.
 
 # FILTRAR
 Otros parámetros que puede recibir el endpoint "localhost/RankingHub3/juegos" son los de filtración por clave y valor
-### localhost/RankingHub3/juegos?key=categoria&value=Aventura ###
+### localhost/RankingHub3/api/juegos?key=categoria&value=Aventura ###
  ⚠*Siempre deben indicarse los dos*
 ```
 [
@@ -233,7 +233,7 @@ key && value (Deben indicarse los dos estrictamente)**
 
 ## localhost/Web2/RankingHub3/juegos/id ##
 Este endpoint se encarga de obtener un juego por id, indicado por el número de id que se encuentre en el parámetro luego de juegos/
-Por ejemplo: localhost/Web2/RankingHub3/juegos/id
+Por ejemplo: localhost/RankingHub3/api/juegos/3
 `
 {
     "id": 3,
