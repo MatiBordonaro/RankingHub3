@@ -29,6 +29,7 @@ class GamesApiController extends APIcontroller {
                     die();
                 }
                 $this->getAllSorted(); //obtiene los juegos clasificados o muestra por defecto(id)
+                die();
             }
             //PAGINAR
             if($page || $limit){ //si el cliente quiere paginar o poner un limite a mostrar
@@ -37,6 +38,7 @@ class GamesApiController extends APIcontroller {
                     die();
                 }
                 $this->getPaginated();
+                die();
             }
             //FILTRAR
             if($key || $value){ //acá hago un paso extra para que toda la lógica de filtrar quede adentro de esta porcion de codigo
@@ -46,6 +48,7 @@ class GamesApiController extends APIcontroller {
                         die();
                     } else {
                         $this->getFiltered();
+                        die();
                     }
                 } else { //si llega acá quiere decir que indico una clave o un valor, pero no ambos
                     $this->view->response(['msg:' => 'Debe indicar si o si una clave y luego un valor, intente de nuevo'], 404);
@@ -55,6 +58,7 @@ class GamesApiController extends APIcontroller {
             else {
                 $games = $this->model->getAll(); //si el cliente no realiza ninguna petición extra, obtiene todos los juegos
                 $this->view->response($games, 200);
+                die();
             }
         } else { // Sí params no está vacio, obtenemos un solo juego
             $game = $this->model->get($params[':ID']);
@@ -96,7 +100,6 @@ class GamesApiController extends APIcontroller {
         } else {
             $Games = $this->model->getPaginated($page, $limit);
             $this->view->response($Games, 200);
-            die();
         }
     }
 
@@ -139,7 +142,7 @@ class GamesApiController extends APIcontroller {
             $id = $this->model->add($nombre, $categoria, $precio, $fecha);
             $this->view->response(['msg' => 'El juego fue creado con el id: ' . $id], 201);
         } else {
-            $this->view->response(['msg' => 'Ingrese los datos correctos para agregar el juego'], 400);
+            $this->view->response(['msg' => 'Los datos igresados no coinciden con los datos solicitados para agregar el juego'], 400);
         }
     }
     
@@ -158,7 +161,7 @@ class GamesApiController extends APIcontroller {
                 $this->model->update($nombre, $categoria, $precio, $fecha, $id);
                 $this->view->response(['msg:' => 'El juego con el id: ' . $id . ' fue modificado'], 200);
             } else {
-                $this->view->response(['msg:' => 'Faltan datos obligatorios para modificar'], 400);   
+                $this->view->response(['msg:' => 'Faltan datos obligatorios para modificar o los datos ingresados no coinciden con los datos de la tabla'], 400);   
             }
         }
         else{
