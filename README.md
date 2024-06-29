@@ -43,19 +43,20 @@ Este endpoint también puede usarse con query params, que nos permite realizar d
         "fecha": "2013-09-17"
     },
     {
-        "id": 2,
-        "nombre": "Grand Theft Auto V",
-        "categoria": "Aventura",
+        "id": 1,
+        "nombre": "Minecraft",
+        "categoria": "Battle Royale",
         "precio": 29.99,
-        "fecha": "2013-09-17"
+        "fecha": "2011-11-18"
     },
     {
-        "id": 4,
-        "nombre": "Grand Theft Auto V",
+        "id": 6,
+        "nombre": "Super Mario Bros",
         "categoria": "Aventura",
-        "precio": 29.99,
-        "fecha": "2013-09-17"
-    } ...
+        "precio": 9.99,
+        "fecha": "1985-09-13"
+    },
+     ...
 ```
 Acá podemos ver que trae los mismos objetos pero ordenados por nombre, por ejemplo.    
 También podemos especificar el orden en el que se van a ver.
@@ -294,7 +295,7 @@ En caso de que haya un error con el ingreso de datos, o que los datos no coincid
 }
 ```
 ## Metodo PUT
-#### localhost/RankingHub3/api/juegos/:ID
+#### localhost/RankingHub3/juegos/:ID
 El **endpoint** para modificar un juego usando el metodo PUT es localhost/RankingHub3/api/juegos/:ID, para modificar un juego de la tabla necesitamos ingresar los datos correspondientes desde el POSTMAN.
 **Por ejemlpo:**
 Obtenemos el juego por id desde base de datos con el endpoint -> localhost/RankingHub3/api/juegos/10:
@@ -350,7 +351,7 @@ En caso de que haya un error en la modificación, como que el id ingresado no ex
 }
 ```
 ## Metodo DELETE
-#### localhost/RankingHub3/api/juegos/:ID
+#### localhost/RankingHub3/juegos/:ID
 En la baja de un juego se usa el mismo **endpoint** que en el metodo modificar, ya que eliminamos el juego en base a su id.
 **Por ejemplo**
 Tenemos la siguiente tabla:
@@ -377,7 +378,7 @@ Tenemos la siguiente tabla:
         "fecha": "2010-09-13"
     }
 ```
-Con el **endpoint** -> localhost/RankingHub3/api/juegos/10 tomamos el juego con el id 10 y lo eliminamos.
+Con el **endpoint** -> localhost/RankingHub3/juegos/10 tomamos el juego con el id 10 y lo eliminamos.
 Si se completó la eliminación del juego con éxito, nos mostrará el siguiente mensaje:
 ```
 {
