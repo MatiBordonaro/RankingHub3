@@ -251,7 +251,7 @@ En caso de que no exista un juego con ese id, se indicará el siguiente error:
 `
 # Metodos ABM 
 ## Metodo POST  
-**localhost/RankingHub3/api/juegos**
+#### localhost/RankingHub3/api/juegos
 Este **endpoint** sirve para crear un nuevo juego usando el metodo POST, para poder agregarlo hay que enviar los datos que solicita la base de datos.
 ## Por ejemplo: 
 Codigo en postman para enviar el nuevo juego:  
@@ -294,7 +294,7 @@ En caso de que haya un error con el ingreso de datos, o que los datos no coincid
 }
 ```
 ## Metodo PUT
-**localhost/RankingHub3/api/juegos/:ID**
+#### localhost/RankingHub3/api/juegos/:ID
 El **endpoint** para modificar un juego usando el metodo PUT es localhost/RankingHub3/api/juegos/:ID, para modificar un juego de la tabla necesitamos ingresar los datos correspondientes desde el POSTMAN.
 **Por ejemlpo:**
 Obtenemos el juego por id desde base de datos con el endpoint -> localhost/RankingHub3/api/juegos/10:
@@ -350,7 +350,7 @@ En caso de que haya un error en la modificación, como que el id ingresado no ex
 }
 ```
 ## Metodo DELETE
-**localhost/RankingHub3/api/juegos/:ID**
+#### localhost/RankingHub3/api/juegos/:ID
 En la baja de un juego se usa el mismo **endpoint** que en el metodo modificar, ya que eliminamos el juego en base a su id.
 **Por ejemplo**
 Tenemos la siguiente tabla:
