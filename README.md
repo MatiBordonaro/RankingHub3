@@ -409,7 +409,7 @@ En caso de que haya un error en el proceso de baja, como que el id no exista, no
 }
 ```
 El id 10 ya ha sido borrado anteriormente, por eso es que nos muestra que no existe.
-##VALIDACION POR TOKEN##
+## VALIDACION POR TOKEN
 Esta validacion se toma en postman desde el apartade de authorization en el cual se elige el tipo que vamos a utilizar para autorizarnos. La validacion solo la hacemos en los metodos POST y PUT los cuales necesitan de un Token para poder entrar. El token lo hicimos mediante JWT y es el siguiente:
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoid2ViYWRtaW4iLCJjb250cmFzZcOxYSI6ImFkbWluIn0.DVONr3o6GnFXuCT2RDKbGQsQBMhC6s5lB_7o3FBmw3U
 Este token representa al usuario (webadmin) y a la contraseña (admin).
