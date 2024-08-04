@@ -1,5 +1,5 @@
 <?php
-require_once 'app/view/GamesApiView.php';
+require_once 'app/view/ApiView.php';
 
 //creamos una api controller donde manejamos construimos la vista y la data
 class APIcontroller
@@ -9,7 +9,7 @@ class APIcontroller
 
     public function __construct()
     {
-        $this->view = new GamesApiView();
+        $this->view = new ApiView();
         $this->data = file_get_contents('php://input'); //esta funcionn lee el texto que pasa el cliente
     }
 

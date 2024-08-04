@@ -1,6 +1,6 @@
 <?php
 
-    class GamesApiView{
+    class ApiView{
         public function response($data, $status){
             header('Content-type: application/json');
             header('HTTP/1.1 '.$status." ".$this->_requestStatus($status));
@@ -11,6 +11,7 @@
                 200 => 'OK',
                 201 => 'CREATED',
                 400 => 'BAD REQUEST',
+                401 => 'NOT AUTHORIZED',
                 404 => 'NOT FOUND',
                 500 => 'Internal Server Error'
             );

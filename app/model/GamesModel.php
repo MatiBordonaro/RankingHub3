@@ -11,10 +11,10 @@ class GamesModel extends Model {
         return $games;
     }
 
-    function add($nombre, $categoria, $precio, $fecha){
+    function add($nombre, $id_categoria, $categoria, $precio, $fecha){
         $db = $this->createConexion();
-        $query = $db->prepare('INSERT INTO juegos (nombre, categoria, precio, fecha) VALUES (?,?,?,?)');
-        $query->execute([$nombre, $categoria, $precio, $fecha]);
+        $query = $db->prepare('INSERT INTO juegos (nombre, id_categoria, categoria, precio, fecha) VALUES (?,?,?,?,?)');
+        $query->execute([$nombre, $id_categoria, $categoria, $precio, $fecha]);
         return $db->lastInsertId();
     }
 
@@ -24,10 +24,10 @@ class GamesModel extends Model {
         $query->execute([$id]);
     }
 
-    function update($nombre, $categoria, $precio, $fecha, $id){
+    function update($nombre, $id_categoria, $categoria, $precio, $fecha, $id){
         $db = $this->createConexion();
-        $query = $db->prepare('UPDATE juegos SET nombre=?, categoria=?, precio=?, fecha=? WHERE id=?');
-        $query->execute([$nombre, $categoria, $precio, $fecha, $id]);
+        $query = $db->prepare('UPDATE juegos SET nombre=?, id_categoria=?, categoria=?, precio=?, fecha=? WHERE id=?');
+        $query->execute([$nombre, $id_categoria, $categoria, $precio, $fecha, $id]);
     }
 
     function get($id){

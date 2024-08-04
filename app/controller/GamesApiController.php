@@ -1,7 +1,8 @@
 <?php
 require_once 'app/model/GamesModel.php';
 require_once 'app/controller/APIcontroller.php';
-
+require_once 'config.php';
+ini_set('display_errors', 0);
 
 class GamesApiController extends APIcontroller {
 
@@ -11,17 +12,19 @@ class GamesApiController extends APIcontroller {
         parent::__construct();
         $this->model = new GamesModel();
     }
-
+    
     function get($params = []) {
+
         if (empty($params)) { //si no hay parámetros, obtenemos todos los juegos
             //creo variables booleanas para no repetir tanto código. 
             $sort = isset($_GET['sort']); //clasificar
             $order = isset($_GET['order']); //ordenar
+            
             $page = isset($_GET['page']); //página
             $limit = isset($_GET['limit']); //límite
+            
             $key = isset($_GET['key']); //clave
             $value = isset($_GET['value']); //valor
-
             //CLASIFICAR Y/O ORDENAR
             if($sort || $order){//si el cliente quiere clasificar u ordenar
                 if($page || $limit || $key || $value){ //condición por si el cliente quiere realizar otras acciones mientras clasifica
@@ -95,7 +98,7 @@ class GamesApiController extends APIcontroller {
         $page = isset($_GET['page']) ? $_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 5;
         if(!(is_numeric($page) && is_numeric($limit) && $page >= 1 && $limit > 2 )){
-            $this->view->response(['msg:' => 'La página o el límite no es válido, por favor indique una página válida y un límite mayor a 2'], 404);
+            $this->view->response(['msg:' => 'La página o el límite no es válido, por favor indique una página válida y un límite mayor a 2'], 400);
             die();
         } else {
             $Games = $this->model->getPaginated($page, $limit);
@@ -132,14 +135,19 @@ class GamesApiController extends APIcontroller {
     }
 
     function add() {
+        if(!$this->VerificarToken()){//verificar la autorizacion
+            $this->view->response("No autorizado", 401);
+            die;
+        }
         $body = $this->getdata(); // json que introdujo el cliente
         // verificar que todos los campos existan (menos el de id que el usuario no debe especificarlo)
-        if(isset($body->nombre) && isset($body->categoria) && isset($body->precio) && isset($body->fecha)) {
+        if(isset($body->nombre) && isset($body->id_categoria)&& isset($body->categoria) && isset($body->precio) && isset($body->fecha)) {
             $nombre = $body->nombre;
+            $id_categoria=$body->id_categoria;
             $categoria = $body->categoria;
             $precio = $body->precio;
             $fecha = $body->fecha;
-            $id = $this->model->add($nombre, $categoria, $precio, $fecha);
+            $id = $this->model->add($nombre, $id_categoria, $categoria, $precio, $fecha);
             $this->view->response(['msg' => 'El juego fue creado con el id: ' . $id], 201);
         } else {
             $this->view->response(['msg' => 'Los datos igresados no coinciden con los datos solicitados para agregar el juego'], 400);
@@ -148,17 +156,22 @@ class GamesApiController extends APIcontroller {
     
     
     function update($params = []){
+        if(!$this->VerificarToken()){
+            $this->view->response("No autorizado", 401);
+            die;
+        }
         $id = $params[':ID'];
         $Game = $this->model->get($id);
         if($Game){
             $body = $this->getdata();
             if(isset($body->nombre) && isset($body->categoria) && isset($body->precio) && isset($body->fecha)) {
                 $nombre = $body->nombre;
+                $id_categoria=$body->id_categoria;
                 $categoria = $body->categoria;
                 $precio = $body->precio;
                 $fecha = $body->fecha;
 
-                $this->model->update($nombre, $categoria, $precio, $fecha, $id);
+                $this->model->update($nombre,  $id_categoria, $categoria, $precio, $fecha, $id);
                 $this->view->response(['msg:' => 'El juego con el id: ' . $id . ' fue modificado'], 200);
             } else {
                 $this->view->response(['msg:' => 'Faltan datos obligatorios para modificar o los datos ingresados no coinciden con los datos de la tabla'], 400);   
@@ -169,5 +182,27 @@ class GamesApiController extends APIcontroller {
         }
     }
 
+    function VerificarToken(){
+        global $config;
+
+        $encabezados= apache_request_headers();
+        $authorization= $encabezados['Authorization'];
+        $params= explode(' ', $authorization);
+
+        $token=$params[1];
+        $itemsJWT=explode('.', $token);
+
+        $header= base64_decode($itemsJWT[0]);
+        $payload= json_decode(base64_decode($itemsJWT[1])); 
+
+        $usuario=$payload->usuario;
+        $clave=$payload->contraseña;
+        
+        if($usuario===$config['userpass']['user']&&$clave===$config['userpass']['pass']){
+            return true;
+        }else{
+            return false;
+        }; 
+    }
     
 }
